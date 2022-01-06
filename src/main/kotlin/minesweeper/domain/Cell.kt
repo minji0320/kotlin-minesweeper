@@ -8,3 +8,19 @@ sealed class Cell {
         }
     }
 }
+
+class Mine : Cell() {
+    override fun toString(): String {
+        return MARK
+    }
+
+    companion object {
+        private const val MARK = "*"
+    }
+}
+
+data class Block(private val aroundMineCount: Int = 0) : Cell() {
+    override fun toString(): String {
+        return aroundMineCount.toString()
+    }
+}
