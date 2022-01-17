@@ -1,26 +1,34 @@
 package minesweeper.domain
 
-sealed class Cell {
+sealed class Cell(var isOpen: Boolean) {
     fun isMine(): Boolean {
         return when (this) {
             is Mine -> true
             is Block -> false
         }
     }
-}
 
-class Mine : Cell() {
-    override fun toString(): String {
-        return MARK
+    fun open() {
+        isOpen = true
     }
 
     companion object {
-        private const val MARK = "*"
+        const val MARK = "C"
     }
 }
 
-data class Block(private val aroundMineCount: Int = 0) : Cell() {
+class Mine : Cell(false) {
     override fun toString(): String {
-        return aroundMineCount.toString()
+        return MARK
+    }
+}
+
+data class Block(private val aroundMineCount: Int = 0) : Cell(false) {
+    override fun toString(): String {
+        return if (isOpen) {
+            aroundMineCount.toString()
+        } else {
+            MARK
+        }
     }
 }
