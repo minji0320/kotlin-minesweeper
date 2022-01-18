@@ -12,5 +12,23 @@ fun main() {
         InputView.askBoardInfo(AskType.MINE_COUNT)
     )
 
-    ResultView.showBoard(board)
+    ResultView.startGame()
+    while (true) {
+        val pos = InputView.askOpenPosition()
+        if (board.isAlreadyOpened(pos)) {
+            ResultView.showAlreadyOpened()
+            continue
+        }
+
+        if (board.openCell(pos)) {
+            ResultView.showBoard(board)
+            if (board.isWin()) {
+                ResultView.showWinGame()
+                break
+            }
+        } else {
+            ResultView.showLoseGame()
+            break
+        }
+    }
 }

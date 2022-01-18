@@ -23,7 +23,7 @@ class Mine : Cell(false) {
     }
 }
 
-data class Block(private val aroundMineCount: Int = 0) : Cell(false) {
+data class Block(val aroundMineCount: Int = 0) : Cell(false) {
     override fun toString(): String {
         return if (isOpen) {
             aroundMineCount.toString()
