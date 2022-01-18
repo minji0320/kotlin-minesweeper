@@ -54,9 +54,52 @@ data class Board(val height: Int, val width: Int, val mineCount: Int) {
         return board.toString()
     }
 
+    fun openCell(pos: List<Int>): Boolean {
+        return when (val cell = getCell(pos)) {
+            is Mine -> false
+            is Block -> {
+                cell.open()
+                openAround(cell, pos)
+                true
+            }
+        }
+    }
+
+    private fun getCell(pos: List<Int>): Cell {
+        require(pos[0] in 1..width && pos[1] in 1..height) { INVALID_OPEN_POSITION }
+        return board[(pos[0] - 1) + (pos[1] - 1) * height]
+    }
+
+    private fun openAround(cell: Block, pos: List<Int>) {
+        if (cell.aroundMineCount > 0) {
+            return
+        }
+        for (i in dx.indices) {
+            val nx = pos[1] + dx[i]
+            val ny = pos[0] + dy[i]
+            val newPos = listOf(ny, nx)
+            if (isWithinBoundary(nx - 1, ny - 1)) {
+                val aroundCell = getCell(newPos)
+                if (aroundCell is Block && !aroundCell.isOpen) {
+                    aroundCell.open()
+                    openAround(aroundCell, newPos)
+                }
+            }
+        }
+    }
+
+    fun isAlreadyOpened(pos: List<Int>): Boolean {
+        return getCell(pos).isOpen
+    }
+
+    fun isWin(): Boolean {
+        return board.count { !it.isOpen } == mineCount
+    }
+
     companion object {
         private const val INVALID_BOARD_INFO = "높이, 너비, 지뢰 개수는 모두 양의 정수이어야 합니다."
         private const val INVALID_MINE_COUNT = "설치할 지뢰 개수가 맞지 않습니다."
+        private const val INVALID_OPEN_POSITION = "open 좌표는 보드 크기 내의 값이어야 합니다."
         private val dx = listOf(-1, -1, -1, 0, 0, 1, 1, 1)
         private val dy = listOf(-1, 0, 1, -1, 1, -1, 0, 1)
     }
