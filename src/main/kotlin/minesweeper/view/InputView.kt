@@ -1,6 +1,7 @@
 package minesweeper.view
 
 import minesweeper.domain.AskType
+import minesweeper.domain.Position
 
 object InputView {
     private const val ASK_HEIGHT = "높이를 입력하세요"
@@ -23,7 +24,7 @@ object InputView {
         return input
     }
 
-    fun askOpenPosition(): List<Int> {
+    fun askOpenPosition(): Position {
         print(ASK_OPEN_POSITION)
 
         val input = readLine()?.split(",")
@@ -35,6 +36,6 @@ object InputView {
         }
         require(result.size == 2) { INVALID_POSITION_INPUT_MSG }
 
-        return result
+        return Position(result[1] - 1, result[0] - 1)
     }
 }

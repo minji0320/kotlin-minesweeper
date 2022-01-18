@@ -54,42 +54,42 @@ data class Board(val height: Int, val width: Int, val mineCount: Int) {
         return board.toString()
     }
 
-    fun openCell(pos: List<Int>): Boolean {
-        return when (val cell = getCell(pos)) {
+    fun openCell(position: Position): Boolean {
+        return when (val cell = getCell(position)) {
             is Mine -> false
             is Block -> {
                 cell.open()
-                openAround(cell, pos)
+                openAround(cell, position)
                 true
             }
         }
     }
 
-    private fun getCell(pos: List<Int>): Cell {
-        require(pos[0] in 1..width && pos[1] in 1..height) { INVALID_OPEN_POSITION }
-        return board[(pos[0] - 1) + (pos[1] - 1) * height]
+    private fun getCell(position: Position): Cell {
+        require(position.x in 0 until height && position.y in 0 until width) { INVALID_OPEN_POSITION }
+        return board[(position.x) * height + (position.y)]
     }
 
-    private fun openAround(cell: Block, pos: List<Int>) {
+    private fun openAround(cell: Block, position: Position) {
         if (cell.aroundMineCount > 0) {
             return
         }
         for (i in dx.indices) {
-            val nx = pos[1] + dx[i]
-            val ny = pos[0] + dy[i]
-            val newPos = listOf(ny, nx)
-            if (isWithinBoundary(nx - 1, ny - 1)) {
-                val aroundCell = getCell(newPos)
+            val nx = position.x + dx[i]
+            val ny = position.y + dy[i]
+            val newPosition = Position(nx, ny)
+            if (isWithinBoundary(nx, ny)) {
+                val aroundCell = getCell(newPosition)
                 if (aroundCell is Block && !aroundCell.isOpen) {
                     aroundCell.open()
-                    openAround(aroundCell, newPos)
+                    openAround(aroundCell, newPosition)
                 }
             }
         }
     }
 
-    fun isAlreadyOpened(pos: List<Int>): Boolean {
-        return getCell(pos).isOpen
+    fun isAlreadyOpened(position: Position): Boolean {
+        return getCell(position).isOpen
     }
 
     fun isWin(): Boolean {
