@@ -5,7 +5,7 @@ data class Board(val height: Int, val width: Int, val mineCount: Int) {
     val board: List<Cell> = init()
 
     private fun init(): List<Cell> {
-        require(height > 0 && width > 0 && mineCount > 0) { INVALID_BOARD_INFO }
+        require(height > 0 && width > 0 && mineCount >= 0) { INVALID_BOARD_INFO }
         return setMinesAndBlocks(getMinesPosition())
     }
 
@@ -97,7 +97,7 @@ data class Board(val height: Int, val width: Int, val mineCount: Int) {
     }
 
     companion object {
-        private const val INVALID_BOARD_INFO = "높이, 너비, 지뢰 개수는 모두 양의 정수이어야 합니다."
+        private const val INVALID_BOARD_INFO = "높이, 너비는 모두 양의 정수이어야 하며, 지뢰의 개수는 0개 이상이어야 합니다."
         private const val INVALID_MINE_COUNT = "설치할 지뢰 개수가 맞지 않습니다."
         private const val INVALID_OPEN_POSITION = "open 좌표는 보드 크기 내의 값이어야 합니다."
         private val dx = listOf(-1, -1, -1, 0, 0, 1, 1, 1)
