@@ -9,7 +9,7 @@ internal class BoardTest {
     @Test
     fun `보드의 높이, 너비, 지뢰 개수가 양수가 아닌 경우`() {
         assertThrows<IllegalArgumentException> { Board(-1, -1, -1) }
-        assertThrows<IllegalArgumentException> { Board(10, 10, 0) }
+        assertThrows<IllegalArgumentException> { Board(10, 10, -1) }
     }
 
     @Test
@@ -53,5 +53,40 @@ internal class BoardTest {
         assertThat(board.getAroundMineCount(6, minesPosition)).isEqualTo(0)
         assertThat(board.getAroundMineCount(7, minesPosition)).isEqualTo(0)
         assertThat(board.getAroundMineCount(8, minesPosition)).isEqualTo(0)
+    }
+
+    @Test
+    fun `주변의 지뢰가 0개인 셀을 여는 경우 주변의 Block 함께 open`() {
+        val board = Board(2, 2, 0)
+        // 설정한 게임 보드
+        //     0 0
+        //     0 0
+
+        board.openCell(Position(1, 0))
+        assertThat(board.isAlreadyOpened(Position(0, 0))).isTrue
+        assertThat(board.isAlreadyOpened(Position(0, 1))).isTrue
+        assertThat(board.isAlreadyOpened(Position(1, 0))).isTrue
+        assertThat(board.isAlreadyOpened(Position(1, 1))).isTrue
+    }
+
+    @Test
+    fun `게임에서 승리하는 경우`() {
+        val board = Board(1, 2, 1)
+        when {
+            board.board[0].isMine() -> board.openCell(Position(0, 1))
+            else -> board.openCell(Position(0, 0))
+        }
+        assertThat(board.isWin()).isTrue
+    }
+
+    @Test
+    fun `게임에서 패배하는 경우`() {
+        val board = Board(1, 2, 1)
+        val result = when {
+            board.board[0].isMine() -> board.openCell(Position(0, 0))
+            else -> board.openCell(Position(0, 1))
+        }
+        assertThat(board.isWin()).isFalse
+        assertThat(result).isFalse
     }
 }
